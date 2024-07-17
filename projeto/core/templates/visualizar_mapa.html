@@ -1,0 +1,120 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Mapa</title>
+    <style>
+        /* Estilos para o mapa */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        #endereco-marcador {
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mapa com Coordenadas</h1>
+    <div id="map"></div>
+    <input type="text" id="endereco-marcador" placeholder="Endereço do marcador">
+    <button onclick="salvarNovoEndereco()">Salvar Endereço</button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function initMap() {
+            const coordenadasJsonString = '{{ coordenadas|safe }}';
+
+            if (!coordenadasJsonString) {
+                console.error('Coordenadas JSON vazio ou não definido.');
+                return;
+            }
+
+            try {
+                const coordenadas = JSON.parse(coordenadasJsonString);
+
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    center: { lat: -14.235, lng: -51.9253 },
+                    zoom: 4,
+                });
+
+                coordenadas.forEach(coordenada => {
+                    let marker = new google.maps.Marker({
+                        position: { lat: parseFloat(coordenada.lat), lng: parseFloat(coordenada.lng) },
+                        map: map,
+                        title: coordenada.titulo,
+                        draggable: true,
+                    });
+
+                    let infoWindow = new google.maps.InfoWindow({
+                        content: coordenada.titulo,
+                    });
+
+                    marker.addListener("click", () => {
+                        infoWindow.open(map, marker);
+                    });
+
+                    marker.addListener("dragend", function() {
+                        atualizarEndereco(marker.getPosition(), coordenada.titulo);
+                    });
+                });
+            } catch (error) {
+                console.error('Erro ao processar coordenadas JSON:', error);
+            }
+        }
+
+        function atualizarEndereco(posicao, titulo) {
+            const csrfToken = '{{ csrf_token }}';
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'atualizar_endereco' %}",
+                headers: { "X-CSRFToken": csrfToken },
+                data: {
+                    'lat': posicao.lat(),
+                    'lng': posicao.lng(),
+                    'titulo': titulo
+                },
+                success: function(response) {
+                    console.log(response.message);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Erro ao atualizar endereço:", error);
+                }
+            });
+        }
+
+        function salvarNovoEndereco() {
+            const novoEndereco = document.getElementById("endereco-marcador").value;
+
+            fetch('{% url "salvar_novo_endereco" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ novo_endereco: novoEndereco })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Erro ao salvar o novo endereço:', error);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        });
+    </script>
+</body>
+</html>

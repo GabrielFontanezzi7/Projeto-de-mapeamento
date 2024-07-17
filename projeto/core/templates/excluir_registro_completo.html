@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Registro Completo</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Excluir Registro Completo</h1>
+    <p>Tem certeza que deseja excluir o registro de {{ registro.nome }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Excluir</button>
+        <a href="{% url 'visualizar_registros_completos' %}">Cancelar</a>
+    </form>
+</body>
+</html>

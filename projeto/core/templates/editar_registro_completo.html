@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Registro Completo</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Editar Registro Completo</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ endereco_form.as_p }}
+        <button type="submit">Salvar</button>
+    </form>
+</body>
+</html>
