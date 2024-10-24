@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeamento - Home</title>
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <!-- JS -->
+    <script src="{% static 'js/sidebar.js' %}" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var map;
+        var markers = {};
+
+        function initMap() {
+            var locais_votacao = JSON.parse('{{ locais_votacao_json|escapejs }}');
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: {lat: -15.779, lng: -47.929}  // Posição centralizada em Brasília
+            });
+
+            var service = new google.maps.places.PlacesService(map);
+
+            locais_votacao.forEach(function(local) {
+                var request = {
+                    query: local.local + ", " + local.municipio,
+                    fields: ['name', 'geometry'],
+                };
+
+                service.findPlaceFromQuery(request, function(results, status) {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        var place = results[0];
+                        var marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            map: map,
+                            title: local.local,
+                            draggable: true
+                        });
+
+                        var infoWindow = new google.maps.InfoWindow({
+                            content: `<h4>${local.local}</h4><p>${local.endereco_votacao}</p>`
+                        });
+
+                        marker.addListener('click', function() {
+                            infoWindow.open(map, marker);
+                        });
+
+                        markers[local.id] = marker;
+                    }
+                });
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+</head>
+<body>
+    <div class="app">
+        <div class="sidebar">
+            <div class="menu-btn">
+                <i class="ph-bold ph-caret-left"></i>
+            </div>
+            <div class="head">
+                <div class="user-img">
+                    <img src="{% static 'images/user.jpg' %}" alt="Imagem do usuario">
+                </div>
+                <div class="user-details">
+                    <p class="title">Usuário</p>
+                    <p class="name">{{ user.get_full_name|default:user.username }}</p>
+                </div>
+            </div>
+            <div class="nav">
+                <div class="menu">
+                    <p class="title">Main</p>
+                    <ul>
+                        <li class="active">
+                            <a href="{% url 'home' %}">
+                                <i class="icon ph-bold ph-house-simple"></i>
+                                <span class="text">Início</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-user"></i>
+                                <span class="text">Registrar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'registro_simples' %}">
+                                        <span class="text">Registro Simples</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'registro_completo' %}">
+                                        <span class="text">Registro Completo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'visualizar_mapa' %}">
+                                <i class="icon ph ph-map-trifold"></i>
+                                <span class="text">Mapa</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-chart-bar"></i>
+                                <span class="text">Visualizar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'visualizar_registros_simples' %}">
+                                        <span class="text">Ver Registros Simples</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'visualizar_registros_completos' %}">
+                                        <span class="text">Ver Registros Completos</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu">
+                    <p class="title">Settings</p>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-gear"></i>
+                                <span class="text">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="menu">
+                <p class="title">Account</p>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <i class="icon ph-bold ph-info"></i>
+                            <span class="text">Help</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="icon ph-bold ph-sign-out"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <h1>Bem-vindo!</h1>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total de Registros Simples</h3>
+                    <p>{{ total_registros_simples }}</p>
+                </div>
+                <div class="card">
+                    <h3>Total de Registros Completos</h3>
+                    <p>{{ total_registros_completos }}</p>
+                </div>
+                <div class="card">
+                    <h3>Total de Locais de Votação</h3>
+                    <p>{{ total_locais_votacao }}</p>
+                </div>
+                <div class="card">
+                    <h3>Locais com Mais Votantes</h3>
+                    <ul>
+                        {% for local in locais_votacao %}
+                        <li>{{ local.local }} - {{ local.count }} votantes</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Outras Informações</h3>
+                    <p>{{ outras_informacoes }}</p>
+                </div>
+            </div>
+            <div id="map" style="width: 100%; height: 400px; margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Jquery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"
+      integrity="sha512-8Z5++K1rB3U+USaLKG6oO8uWWBhdYsM3hmdirnOEWp8h2B1aOikj5zBzlXs8QOrvY9OxEnD2QDkbSKKpfqcIWw=="
+      crossorigin="anonymous"
+    ></script>
+</body>
+</html>

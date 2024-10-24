@@ -1,0 +1,233 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeamento - Registro</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karma:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+    <!-- JS -->
+    <script src="{% static 'js/login.js' %}" defer></script>
+    <style>
+        body {
+            background-color: #030D15;
+            background-image: url("{% static 'images/maps.png' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza horizontalmente */
+            justify-content: center; /* Centraliza verticalmente */
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .header-line {
+            width: 1600px; /* Define a largura da linha */
+            /* max-width:; Define um máximo de largura */
+            height: 1px; /* Define a altura da linha */
+            background-color: #fff; /* Cor da linha */
+            margin: 20px auto; /* Centraliza a linha e adiciona espaçamento vertical */
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 500px;
+            height: 500px auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: bottom;
+        }
+        
+        header {
+            width: 96.5%; /* Adiciona esta linha para garantir que o header tenha a mesma largura do container */
+            text-align: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .input-field {
+            position: relative;
+            margin-bottom: 15px;
+            width: 100%;
+            height: auto;
+        }
+        
+        .input-field input {
+            width: 100%;
+            padding: 13px 40px 12px 40px; /* Aumentado o padding-left */
+            background-color: transparent;
+            color: #ffff;
+            border: 1px solid #ffff;
+            border-radius: 5px;
+            outline: none;
+            line-height: 1.5; /* Ajuste da altura da linha */
+        }
+        
+        .input-field label {
+            color: #fff;
+            display: block;
+            margin-bottom: 10px;
+            margin-top: 25px
+        }
+        
+        .input-field i.icon {
+            position: absolute;
+            top: 75%;
+            left: 10px; /* Posiciona os ícones à esquerda */
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 1.2em; /* Ajuste do tamanho do ícone */
+            pointer-events: none;
+        }
+        
+        .input-field button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007BFF;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .input-field button:hover {
+            background-color: #0056b3;
+        }
+        
+        .checkbox-text {
+            margin: 15px 0;
+            width: 100%; /* Garante que o checkbox-text ocupe toda a largura do container */
+        }
+        
+        .checkbox-content {
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+        
+        .checkbox-content input {
+            margin-right: 10px;
+        }
+        
+        .messages p {
+            color: red;
+            text-align: center;
+        }
+        
+        .login-signup {
+            text-align: center;
+            color: #fff;
+            margin-top: 10px;
+        }
+        
+        .login-signup a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        
+        .login-signup a:hover {
+            text-decoration: underline;
+        }
+        
+        footer {
+            text-align: center;
+            color: #fff;
+            margin-top: 95px;
+        }
+        
+        .footer-line {
+            width: 1700px; /* Define a largura da linha */
+            max-width: 1700; /* Define um máximo de largura */
+            height: 1px; /* Define a altura da linha */
+            background-color: #fff; /* Cor da linha */
+            margin: 3px auto; /* Centraliza a linha e adiciona espaçamento vertical */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-line"></div>
+        <h1>Registro</h1>
+    </header>
+    <div class="container">
+        <div class="forms">
+            <div class="form signup active">
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form action="{% url 'register' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="input-field">
+                        <label for="username">Nome de usuário</label>
+                        <input type="text" id="username" name="username" required>
+                        <i class="fas fa-user icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                        <i class="fas fa-envelope icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <label for="password1">Senha</label>
+                        <input type="password" id="password1" name="password1" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <label for="password2">Confirmar Senha</label>
+                        <input type="password" id="password2" name="password2" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+                    <div class="checkbox-text">
+                        <div class="checkbox-content">
+                            <input type="checkbox" id="termCon" required>
+                            <label for="termCon" class="text">Aceito todos os termos e condições</label>
+                        </div>
+                    </div>
+                    <div class="input-field button">
+                        <button type="submit">Registrar</button>
+                    </div>
+                </form>
+                <div class="login-signup">
+                    <span class="text">Já possui uma conta?
+                        <a href="{% url 'login' %}" class="text login-link">Faça login</a>.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-line"></div>
+        <p>2024&copy;Mapeamento</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeamento - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+      body, html {
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+          background-color: #01060A;
+          color: #ffffff;
+          height: 100%;
+          overflow: hidden;
+
+      }
+      .container {
+        width: 1700px; /* Define a largura da linha */
+        height: 1px; /* Define a altura da linha */
+        background-color: transparent; /* Cor da linha */
+        margin: 20px auto; /* Centraliza a linha e adiciona espaçamento vertical */
+    }
+  
+      .container {
+          background-color: transparent;
+          display: flex;
+          height: 100vh;
+          flex-direction: row;
+          opacity: 0;
+          animation: fadeIn 1s forwards;
+      }
+  
+      .login-section {
+          background-color: #01080E;
+          padding: 50px;
+          width: 23%;
+          height: 77%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          border-top: 1px solid #E6E6F0;
+          margin-top: 30px;
+          opacity: 0;
+          transform: translateX(-50px);
+          font-family: 'Roboto', sans-serif;
+          animation: slideIn 0.5s forwards 0.5s;
+      }
+  
+      .login-section h2 {
+          margin-bottom: 2px;
+          font-size: 32px;
+      }
+  
+      .login-section span {
+          border: 1px;
+          background-color: #fff;
+          height: 1px;
+          color: #ffff;
+          width: 150px;
+          margin-bottom: 50px;
+      }
+  
+      .login-section label {
+          margin: 10px 0 5px;
+          font-size: 14px;
+          color: #b3b3b3;
+      }
+  
+      .input-container {
+          right: 20px;
+          position: relative;
+          width: 100%;
+          height: 50px;
+          margin-bottom: 25px;
+          align-items: center;
+      }
+    
+      .input-container i {
+          position: absolute;
+          left: 10px;
+          top: 40%;
+          transform: translateY(-50%);
+          color: #888;
+      }
+  
+      .input-container input {
+          width: 100%;
+          padding: 10px 10px 10px 30px;
+          background-color: #2e2e2e;
+          border: 1px solid #444;
+          color: #fff;
+          font-size: 14px;
+          border-radius: 4px;
+      }
+  
+      button {
+          width: 100%;
+          position: center;
+          padding: 10px;
+          background-color: #11212D;
+          border-radius: 7px;
+          border: none;
+          color: #fff;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s;
+      }
+  
+      button:hover {
+          background-color: #0a131a;
+      }
+  
+      p {
+          margin-top: 10px;
+          font-size: 14px;
+          color: #b3b3b3;
+      }
+  
+      p a {
+          color: #3b5998;
+          text-decoration: none;
+          transition: text-decoration 0.3s;
+      }
+  
+      p a:hover {
+          text-decoration: underline;
+      }
+  
+      .map-section {
+          width: 80%;
+          height: 88%;
+          overflow: hidden;
+          position: relative;
+          border-top: 1px solid #E6E6F0;
+          margin-top: 30px;
+          opacity: 0;
+          animation: fadeIn 1s forwards 1s;
+      }
+  
+      .map-section img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease-in-out;
+      }
+  
+      /* .map-section img:hover {
+          transform: scale(1.05);
+      } */
+  
+      footer {
+          position: absolute;
+          bottom: 0;
+          left: 35px;
+          width: 1690px;
+          text-align: center;
+          padding: 5px 0;
+          background-color: #000;
+          font-size: 14px;
+          background-color: transparent;
+          border-top: 1px solid #E6E6F0;
+          
+      }
+  
+      @media (max-width: 768px) {
+          .container {
+              flex-direction: column;
+          }
+          .login-section, .map-section {
+              width: 100%;
+              height: 50vh;
+          }
+          .login-section {
+              padding: 20px;
+              align-items: center;
+          }
+      }
+  
+      @media (max-width: 480px) {
+          .login-section {
+              padding: 15px;
+          }
+          .login-section h2 {
+              font-size: 20px;
+          }
+          .input-container input {
+              padding: 8px 8px 8px 25px;
+          }
+          button {
+              padding: 8px;
+          }
+      }
+  
+      @keyframes fadeIn {
+          to {
+              opacity: 1;
+          }
+      }
+  
+      @keyframes slideIn {
+          to {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+  </style>
+  
+</head>
+<body>
+    <div class="container">
+        <div class="login-section">
+            <h2>Login</h2>
+            <span></span>
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                <label for="Username">Nome de usuario:</label>
+                <div class="input-container">
+                    <i class="fa fa-envelope"></i>
+                    <input type="text" id="username" name="username" placeholder="Username or Email" required>
+                </div>
+                <label for="password">Senha:</label>
+                <div class="input-container">
+                    <i class="fa fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Senha" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p>ou <a href="{% url 'register' %}">Registre-se aqui</a></p>
+        </div>
+        <div class="map-section">
+            <img src="{% static 'images/maps.png' %}" alt="Map Image">
+        </div>
+    </div>
+    <footer>
+        <p>2024@Mapeamento</p>
+    </footer>
+</body>
+</html>
+

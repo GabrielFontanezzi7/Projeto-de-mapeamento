@@ -1,0 +1,126 @@
+/* Importação de fontes */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karma:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap');
+
+/* Reset e configuração geral */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body {
+    background-color: #030D15;
+    background-image: url("{% static 'images/maps.png' %}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.input-field {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    outline: none;
+    line-height: 1.5; /* Ajuste da altura da linha */
+}
+
+.input-field label {
+    color: #fff;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-field i.icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 1.2em; /* Ajuste do tamanho do ícone */
+}
+
+.input-field button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.input-field button:hover {
+    background-color: #0056b3;
+}
+
+.checkbox-text {
+    margin: 15px 0;
+}
+
+.checkbox-content {
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.checkbox-content input {
+    margin-right: 10px;
+}
+
+.messages p {
+    color: red;
+    text-align: center;
+}
+
+.login-signup {
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+}
+
+.login-signup a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.login-signup a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    color: #fff;
+    margin-top: 20px;
+}

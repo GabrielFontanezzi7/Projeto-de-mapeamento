@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/visualizar_registros_simples.css' %}">
+    <!-- JS -->
+    <script src="{% static 'js/sidebar.js' %}" defer></script>
+
+    <title>Mapeamento - Visualizar Registros Completos</title>
+</head>
+<body>
+    
+    <div class="app">
+        <div class="sidebar">
+            <div class="menu-btn">
+                <i class="ph-bold ph-caret-left"></i>
+            </div>
+            <div class="head">
+                <div class="user-img">
+                    <img src="{% static 'images/user.jpg' %}" alt="Imagem do usuario">
+                </div>
+                <div class="user-details">
+                    <p class="title">usuario</p>
+                    <p class="name">{{ user.get_full_name|default:user.username }}</p>
+                </div>
+            </div>
+            <div class="nav">
+                <div class="menu">
+                    <p class="title">Main</p>
+                    <ul>
+                        <li>
+                            <a href="{% url 'home' %}">
+                                <i class="icon ph-bold ph-house-simple"></i>
+                                <span class="text">Início</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-user"></i>
+                                <span class="text">Registrar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'registro_simples' %}">
+                                        <span class="text">Registro Simples</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'registro_completo' %}">
+                                        <span class="text">Registro Completo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'visualizar_mapa' %}">
+                                <i class="icon ph ph-map-trifold"></i>
+                                <span class="text">Mapa</span>
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-calendar-blank"></i>
+                                <span class="text">Schedules</span>
+                            </a>
+                        </li> -->
+                        <li class="active">
+                            <a href="#">
+                                <i class="icon ph-bold ph-chart-bar"></i>
+                                <span class="text">Visualizar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'visualizar_registros_simples' %}">
+                                        <span class="text">Ver Registros Simples</span>
+                                    </a>
+                                </li>
+                                <li class="active">
+                                    <a href="{% url 'visualizar_registros_completos' %}">
+                                        <span class="text">Ver Registros Completos</span>
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a href="#">
+                                        <span class="text">Declines</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Payouts</span>
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu">
+                    <p class="title">Settings</p>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-gear"></i>
+                                <span class="text">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="menu">
+                <p class="title">Account</p>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <i class="icon ph-bold ph-info"></i>
+                            <span class="text">Help</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="icon ph-bold ph-sign-out"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <main>
+            <div class="main-content">
+                <h1>Lista de Registros Completos</h1>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>CPF</th>
+                            <th>Data de Nascimento</th>
+                            <th>Nome da Mãe</th>
+                            <th>Título de Eleitor</th>
+                            <th>Zona e Seção</th>
+                            <th>Municipio</th>
+                            <th>Endereço de votação</th>
+                            <th>Local</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in registros %}
+                        <tr>
+                            <td>{{ registro.nome }}</td>
+                            <td>{{ registro.email }}</td>
+                            <td>{{ registro.telefone }}</td>
+                            <td>{{ registro.cpf }}</td>
+                            <td>{{ registro.data_nascimento }}</td>
+                            <td>{{ registro.nome_mae }}</td>
+                            <td>{{ registro.titulo_eleitor }}</td>
+                            <td>{{ registro.zona_secao }}</td>
+                            <td>{{ registro.municipio }}</td>
+                            <td>{{ registro.endereco_votacao }}</td>
+                            <td>{{ registro.local }}</td>
+                            <td>{{ registro.endereco.endereco_formatado }}</td>
+                            <td>
+                                <a href="{% url 'editar_registro_completo' registro.pk %}" class="edit-btn">Editar</a> <br><br>
+                                </b>
+                                <a href="{% url 'excluir_registro_completo' registro.pk %}" class="delete-btn">Excluir</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Jquery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"
+      integrity="sha512-8Z5++K1rB3U+USaLKG6oO8uWWBhdYsM3hmdirnOEWp8h2B1aOikj5zBzlXs8QOrvY9OxEnD2QDkbSKKpfqcIWw=="
+      crossorigin="anonymous"
+    ></script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/registro_simpless.css' %}">
+    <!-- JS -->
+    <script src="{% static 'js/sidebar.js' %}" defer></script>
+    <!-- <script src="{% static 'js/registers.js' %}" ></script> -->
+    <script src="{% static 'js/cep.js' %}" ></script>
+    <title>Mapeamento - Registro Completo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="app">
+        <div class="sidebar">
+            <div class="menu-btn">
+                <i class="ph-bold ph-caret-left"></i>
+            </div>
+            <div class="head">
+                <div class="user-img">
+                    <img src="{% static 'images/user.jpg' %}" alt="Imagem do usuario">
+                </div>
+                <div class="user-details">
+                    <p class="title">Web developer</p>
+                    <p class="name">Tiago Ribeiro</p>
+                </div>
+            </div>
+            <div class="nav">
+                <div class="menu">
+                    <p class="title">Main</p>
+                    <ul>
+                        <li>
+                            <a href="{% url 'home' %}">
+                                <i class="icon ph-bold ph-house-simple"></i>
+                                <span class="text">Início</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="#">
+                                <i class="icon ph-bold ph-user"></i>
+                                <span class="text">Registrar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'registro_simples' %}">
+                                        <span class="text">Registro Simples</span>
+                                    </a>
+                                </li>
+                                <li class="active">
+                                    <a href="{% url 'registro_completo' %}">
+                                        <span class="text">Registro Completo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-file-text"></i>
+                                <span class="text">Posts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-calendar-blank"></i>
+                                <span class="text">Schedules</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-chart-bar"></i>
+                                <span class="text">Income</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Earnings</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Funds</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Declines</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Payouts</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu">
+                    <p class="title">Settings</p>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-gear"></i>
+                                <span class="text">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="menu">
+                <p class="title">Account</p>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <i class="icon ph-bold ph-info"></i>
+                            <span class="text">Help</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="icon ph-bold ph-sign-out"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="container">
+                <header>Registro Completo</header>
+
+                <form method="POST" action="{% url 'registro_completo' %}">
+                    {% csrf_token %}
+                    <div class="forms">
+                        <div class="details personal">
+                            <span class="title">Informações Pessoais</span>
+
+                            <div class="fields">
+                                <div class="input-field">
+                                    <label for="{{ form.nome.id_for_label }}">Nome Completo</label>
+                                    {{ form.nome }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.email.id_for_label }}">Email</label>
+                                    {{ form.email }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+                                    {{ form.telefone }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.cpf.id_for_label }}">CPF</label>
+                                    {{ form.cpf }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento</label>
+                                    {{ form.data_nascimento }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.nome_mae.id_for_label }}">Nome da Mãe</label>
+                                    {{ form.nome_mae }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.titulo_eleitor.id_for_label }}">Título de Eleitor</label>
+                                    {{ form.titulo_eleitor }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.zona_secao.id_for_label }}">Zona: Seção:</label>
+                                    {{ form.zona_secao }}
+                                </div>
+                                
+                                <div class="input-field">
+                                    <label for="{{ form.municipio.id_for_label }}">Município</label>
+                                    {{ form.municipio }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.local.id_for_label }}">Local</label>
+                                    {{ form.local }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ form.endereco_votacao.id_for_label }}">Endereço de Votação</label>
+                                    {{ form.endereco_votacao }}
+                                    <button type="button" onclick="ativarPesquisa()">Verificar Título</button>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <div class="details address">
+                            <span class="title">Endereço</span>
+
+                            <div class="fields">
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.cep.id_for_label }}">CEP</label>
+                                    {{ endereco_form.cep }}
+                                    <label for="btn_buscar_cep">Buscar CEP</label>
+                                    <input type="button" class="btn_buscar_cep" value="Buscar" onclick="buscarCEP()">
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.rua.id_for_label }}">Rua</label>
+                                    {{ endereco_form.rua }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.numero.id_for_label }}">Número</label>
+                                    {{ endereco_form.numero }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.bairro.id_for_label }}">Bairro</label>
+                                    {{ endereco_form.bairro }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.cidade.id_for_label }}">Cidade</label>
+                                    {{ endereco_form.cidade }}
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.estado.id_for_label }}">Estado</label>
+                                    {{ endereco_form.estado }}
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <button type="submit">
+                            <span class="btnText">Enviar</span>
+                            <i class="uil uil-navigator"></i>
+                        </button>
+                        
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"
+      integrity="sha512-8Z5++K1rB3U+USaLKG6oO8uWWBhdYsM3hmdirnOEWp8h2B1aOikj5zBzlXs8QOrvY9OxEnD2QDkbSKKpfqcIWw=="
+      crossorigin="anonymous"
+    ></script>
+</body>
+</html>

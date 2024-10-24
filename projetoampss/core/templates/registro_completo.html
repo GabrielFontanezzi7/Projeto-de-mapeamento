@@ -1,0 +1,363 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/registro_simples.css' %}">
+    <!-- JS -->
+    <script src="{% static 'js/sidebar.js' %}" defer></script>
+    <!-- <script src="{% static 'js/registers.js' %}" ></script> -->
+    <script src="{% static 'js/cep.js' %}" ></script>
+    <title>Mapeamento - Registro Completo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <style>
+     
+        .input-field input {
+            background-color: transparent; 
+            color: #fff;
+        }
+
+    </style>
+    <script>
+        function formatDateToISO(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateToBrazilian(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function ativarPesquisa() {
+            const cpf = $('#id_cpf').val();
+            const dataNascimento = $('#id_data_nascimento').val();
+            const nomeMae = $('#id_nome_mae').val();
+
+            $.ajax({
+                url: "{% url 'preencher_formulario_ajax' %}",
+                type: "POST",
+                data: {
+                    'csrfmiddlewaretoken': getCookie('csrftoken'),
+                    'cpf': cpf,
+                    'data_nascimento': formatDateToISO(dataNascimento),
+                    'nome_mae': nomeMae
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        $('#id_zona_secao').val(`Zona: ${data.zona} Seção: ${data.secao}`);
+                        $('#id_municipio').val(data.municipio);
+                        $('#id_local').val(data.local);
+                        $('#id_endereco_votacao').val(data.endereco_votacao);
+                        alert('Dados atualizados com sucesso.');
+                    } else {
+                        alert('Erro: ' + data.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Erro na requisição: ' + error);
+                }
+            });
+        }
+
+        function buscarCEP() {
+            const cep = $('#id_cep').val().replace(/\D/g, '');
+            if (cep) {
+                $.ajax({
+                    url: `https://viacep.com.br/ws/${cep}/json/`,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (!('erro' in data)) {
+                            $('#id_rua').val(data.logradouro);
+                            $('#id_bairro').val(data.bairro);
+                            $('#id_cidade').val(data.localidade);
+                            $('#id_estado').val(data.uf);
+                        } else {
+                            alert('CEP não encontrado.');
+                        }
+                    },
+                    error: function() {
+                        alert('Erro na busca do CEP.');
+                    }
+                });
+            } else {
+                alert('Por favor, informe um CEP válido.');
+            }
+        }
+
+        $(document).ready(function() {
+            const dataNascimento = $('#id_data_nascimento').val();
+            if (dataNascimento.includes('-')) {
+                $('#id_data_nascimento').val(formatDateToBrazilian(dataNascimento));
+            }
+
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+        });
+    </script>
+</head>
+<body>
+    
+    <div class="app">
+        <div class="sidebar">
+            <div class="menu-btn">
+                <i class="ph-bold ph-caret-left"></i>
+            </div>
+            <div class="head">
+                <div class="user-img">
+                    <img src="{% static 'images/user.jpg' %}" alt="Imagem do usuario">
+                </div>
+                <div class="user-details">
+                    <p class="title">usuario</p>
+                    <p class="name">{{ user.get_full_name|default:user.username }}</p>
+                </div>
+            </div>
+            <div class="nav">
+                <div class="menu">
+                    <p class="title">Main</p>
+                    <ul>
+                        <li>
+                            <a href="{% url 'home' %}">
+                                <i class="icon ph-bold ph-house-simple"></i>
+                                <span class="text">Início</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="#">
+                                <i class="icon ph-bold ph-user"></i>
+                                <span class="text">Registrar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'registro_simples' %}">
+                                        <span class="text">Registro Simples</span>
+                                    </a>
+                                </li>
+                                <li class="active">
+                                    <a href="{% url 'registro_completo' %}">
+                                        <span class="text">Registro Completo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'visualizar_mapa' %}">
+                                <i class="icon ph ph-map-trifold"></i>
+                                <span class="text">Mapa</span>
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-calendar-blank"></i>
+                                <span class="text">Schedules</span>
+                            </a>
+                        </li> -->
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-chart-bar"></i>
+                                <span class="text">Visualizar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'visualizar_registros_simples' %}">
+                                        <span class="text">Ver Registros Simples</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'visualizar_registros_completos' %}">
+                                        <span class="text">Ver Registros Completos</span>
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a href="#">
+                                        <span class="text">Declines</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Payouts</span>
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu">
+                    <p class="title">Settings</p>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-gear"></i>
+                                <span class="text">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="menu">
+                <p class="title">Account</p>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <i class="icon ph-bold ph-info"></i>
+                            <span class="text">Help</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="icon ph-bold ph-sign-out"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="container">
+                <header>Registro Completo</header>
+
+                <form method="POST" action="{% url 'registro_completo' %}">
+                    {% csrf_token %}
+                    <div class="forms">
+                        <div class="details personal">
+                            <span class="title">Informações Pessoais</span>
+
+                            <div class="fields">
+                                <div class="input-field">
+                                    <label for="{{ form.nome.id_for_label }}">Nome Completo</label>
+                                    {{ form.nome }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.email.id_for_label }}">Email</label>
+                                    {{ form.email }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+                                    {{ form.telefone }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.cpf.id_for_label }}">CPF</label>
+                                    {{ form.cpf }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento</label>
+                                    {{ form.data_nascimento }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.nome_mae.id_for_label }}">Nome da Mãe</label>
+                                    {{ form.nome_mae }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.titulo_eleitor.id_for_label }}">Título de Eleitor</label>
+                                    {{ form.titulo_eleitor }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.zona_secao.id_for_label }}">Zona: Seção:</label>
+                                    {{ form.zona_secao }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.municipio.id_for_label }}">Município</label>
+                                    {{ form.municipio }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.local.id_for_label }}">Local</label>
+                                    {{ form.local }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ form.endereco_votacao.id_for_label }}">Endereço de Votação</label>
+                                    {{ form.endereco_votacao }}
+                                </div>
+                                
+                                <button type="button" class="btn_verificar_titulo" onclick="ativarPesquisa()">
+                                    <span class="btnText">Verificar Título</span>
+                                    <i class="uil uil-search"></i>
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div class="details address">
+                            <span class="title">Endereço</span>
+
+                            <div class="fields">
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.cep.id_for_label }}">CEP</label>
+                                    {{ endereco_form.cep }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.rua.id_for_label }}">Rua</label>
+                                    {{ endereco_form.rua }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.numero.id_for_label }}">Número</label>
+                                    {{ endereco_form.numero }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.bairro.id_for_label }}">Bairro</label>
+                                    {{ endereco_form.bairro }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.cidade.id_for_label }}">Cidade</label>
+                                    {{ endereco_form.cidade }}
+                                </div>
+                                <div class="input-field">
+                                    <label for="{{ endereco_form.estado.id_for_label }}">Estado</label>
+                                    {{ endereco_form.estado }}
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn_buscar_cep" onclick="buscarCEP()">
+                            <span class="btnText">Buscar CEP</span>
+                            <i class="uil uil-search"></i>
+                        </button>
+
+                        <button type="submit">
+                            <span class="btnText">Enviar</span>
+                            <i class="uil uil-navigator"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+ <!-- Jquery -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"
+  integrity="sha512-8Z5++K1rB3U+USaLKG6oO8uWWBhdYsM3hmdirnOEWp8h2B1aOikj5zBzlXs8QOrvY9OxEnD2QDkbSKKpfqcIWw=="
+  crossorigin="anonymous"
+></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</body>
+</html>

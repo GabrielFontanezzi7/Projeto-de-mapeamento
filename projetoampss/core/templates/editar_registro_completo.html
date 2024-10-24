@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapeamento - Editar Registro Completo</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/editar_completo.css' %}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="{% static 'js/sidebar.js' %}" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function ativarPesquisa() {
+            const cpf = $('#id_cpf').val();
+            const dataNascimento = $('#id_data_nascimento').val();
+            const nomeMae = $('#id_nome_mae').val();
+
+            $.ajax({
+                url: "{% url 'preencher_formulario_ajax' %}",
+                type: "POST",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'cpf': cpf,
+                    'data_nascimento': dataNascimento,
+                    'nome_mae': nomeMae
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        $('#id_zona_secao').val(`Zona: ${data.zona} Seção: ${data.secao}`);
+                        $('#id_municipio').val(data.municipio);
+                        $('#id_local').val(data.local);
+                        $('#id_endereco_votacao').val(data.endereco_votacao);
+                        alert('Dados atualizados com sucesso.');
+                    } else {
+                        alert('Erro: ' + data.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Erro na requisição: ' + error);
+                }
+            });
+        }
+
+        function buscarCEP() {
+            const cep = $('#id_cep').val().replace(/\D/g, '');
+            if (cep) {
+                $.ajax({
+                    url: `https://viacep.com.br/ws/${cep}/json/`,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (!('erro' in data)) {
+                            $('#id_rua').val(data.logradouro);
+                            $('#id_bairro').val(data.bairro);
+                            $('#id_cidade').val(data.localidade);
+                            $('#id_estado').val(data.uf);
+                        } else {
+                            alert('CEP não encontrado.');
+                        }
+                    },
+                    error: function() {
+                        alert('Erro na busca do CEP.');
+                    }
+                });
+            } else {
+                alert('Por favor, informe um CEP válido.');
+            }
+        }
+
+        $(document).ready(function() {
+            const dataNascimento = $('#id_data_nascimento').val();
+            if (dataNascimento.includes('-')) {
+                $('#id_data_nascimento').val(formatDateToBrazilian(dataNascimento));
+            }
+
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+        });
+    </script>
+</head>
+<body>
+    
+    <div class="app">
+        <div class="sidebar">
+            <div class="menu-btn">
+                <i class="ph-bold ph-caret-left"></i>
+            </div>
+            <div class="head">
+                <div class="user-img">
+                    <img src="{% static 'images/user.jpg' %}" alt="Imagem do usuario">
+                </div>
+                <div class="user-details">
+                    <p class="title">usuario</p>
+                    <p class="name">{{ user.get_full_name|default:user.username }}</p>
+                </div>
+            </div>
+            <div class="nav">
+                <div class="menu">
+                    <p class="title">Main</p>
+                    <ul>
+                        <li>
+                            <a href="{% url 'home' %}">
+                                <i class="icon ph-bold ph-house-simple"></i>
+                                <span class="text">Início</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-user"></i>
+                                <span class="text">Registrar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'registro_simples' %}">
+                                        <span class="text">Registro Simples</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'registro_completo' %}">
+                                        <span class="text">Registro Completo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'visualizar_mapa' %}">
+                                <i class="icon ph ph-map-trifold"></i>
+                                <span class="text">Mapa</span>
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-calendar-blank"></i>
+                                <span class="text">Schedules</span>
+                            </a>
+                        </li> -->
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-chart-bar"></i>
+                                <span class="text">Visualizar</span>
+                                <i class="arrow ph-bold ph-caret-down"></i>
+                            </a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="{% url 'visualizar_registros_simples' %}">
+                                        <span class="text">Ver Registros Simples</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'visualizar_registros_completos' %}">
+                                        <span class="text">Ver Registros Completos</span>
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a href="#">
+                                        <span class="text">Declines</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="text">Payouts</span>
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu">
+                    <p class="title">Settings</p>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="icon ph-bold ph-gear"></i>
+                                <span class="text">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="menu">
+                <p class="title">Account</p>
+                <ul>
+                    <li>
+                        <a href="#">
+                            <i class="icon ph-bold ph-info"></i>
+                            <span class="text">Help</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="icon ph-bold ph-sign-out"></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+                <div class="container">
+                    <header>Registro Completo - EDITANDO</header>
+            
+                    <form method="post" action="{% url 'editar_registro_completo' registro.pk %}">
+                        {% csrf_token %}
+                        <div class="forms">
+                            <div class="details personal">
+                                <span class="title">Editando Registro Completo</span>
+
+                                <div class="fields">
+                                    <div class="input-field">
+                                        <label for="{{ form.nome.id_for_label }}">Nome Completo</label>
+                                        {{ form.nome }}
+                                    </div>
+                        
+                                    <div class="input-field">
+                                        <label for="{{ form.email.id_for_label }}">Email</label>
+                                        {{ form.email }}
+                                    </div>
+                        
+                                    <div class="input-field">
+                                        <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+                                        {{ form.telefone }}
+                                    </div>
+                        
+                                    <div class="input-field">
+                                        <label for="{{ form.cpf.id_for_label }}">CPF</label>
+                                        {{ form.cpf }}
+                                    </div>
+                        
+                                    <div class="input-field">
+                                        <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento</label>
+                                        {{ form.data_nascimento }}
+                                    </div>
+                        
+                                    <div class="input-field">
+                                        <label for="{{ form.nome_mae.id_for_label }}">Nome da Mãe</label>
+                                        {{ form.nome_mae }}
+                                    </div>
+                        
+                                    <div class="input-field">
+                                        <label for="{{ form.titulo_eleitor.id_for_label }}">Título de Eleitor</label>
+                                        {{ form.titulo_eleitor }}
+                                    </div>
+
+                                    <div class="input-field">
+                                        <label for="{{ form.zona_secao.id_for_label }}">Zona e Seção</label>
+                                        {{ form.zona_secao }}
+                                    </div>
+                    
+                                    <div class="input-field">
+                                        <label for="{{ form.municipio.id_for_label }}">Município</label>
+                                        {{ form.municipio }}
+                                    </div>
+                    
+                                    <div class="input-field">
+                                        <label for="{{ form.endereco_votacao.id_for_label }}">Endereço de Votação</label>
+                                        {{ form.endereco_votacao }}
+                                    </div>
+                    
+                                    <!-- <div class="input-field">
+                                        <label for="{{ form.local.id_for_label }}">Local de Votação</label>
+                                        {{ form.local }}
+                                    </div>
+                                    
+                                    <div class="input-field">
+                                        <label for="id_zona_secao">Zona e Seção</label>
+                                        <input type="text" id="id_zona_secao" name="zona_secao" value="Zona: {{ registro.zona }} Seção: {{ registro.secao }}">
+                                    </div>
+                    
+                                    <div class="input-field hidden">
+                                        <label for="id_municipio">Município</label>
+                                        <input type="text" id="id_municipio" name="municipio" value="{{ registro.municipio }}">
+                                    </div>
+                    
+                                    <div class="input-field hidden">
+                                        <label for="id_local">Local de Votação</label>
+                                        <input type="text" id="id_local" name="local" value="{{ registro.local }}">
+                                    </div>
+                    
+                                    <div class="input-field hidden">
+                                        <label for="id_endereco_votacao">Endereço de Votação</label>
+                                        <input type="text" id="id_endereco_votacao" name="endereco_votacao" value="{{ registro.endereco_votacao }}">
+                                    </div> -->
+                                </div>
+                            </div>
+                    
+                            <div class="buttons-container">
+                                <button type="button" class="btn_ativar_pesquisa" onclick="ativarPesquisa()">
+                                    <span class="btnText">Ativar Pesquisa</span>
+                                    <i class="uil uil-search"></i>
+                                </button>
+                                
+                                <button type="submit">
+                                    <span class="btnText">Salvar</span>
+                                    <i class="uil uil-navigator"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+
+        </div>
+    </div>
+
+    <!-- Jquery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"
+      integrity="sha512-8Z5++K1rB3U+USaLKG6oO8uWWBhdYsM3hmdirnOEWp8h2B1aOikj5zBzlXs8QOrvY9OxEnD2QDkbSKKpfqcIWw=="
+      crossorigin="anonymous"
+    ></script>
+</body>
+</html>

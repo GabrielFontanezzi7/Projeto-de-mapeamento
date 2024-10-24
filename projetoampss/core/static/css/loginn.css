@@ -1,0 +1,157 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #01060A;
+    color: #ffffff;
+    height: 100%;
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+  }
+  
+  .login-section {
+    background-color: #01080E;
+    padding: 40px;
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    border-top: 1px solid #E6E6F0;
+    margin-top: 30px;
+  }
+  
+  .login-section h2 {
+    margin-bottom: 20px;
+    font-size: 32px;
+    /* text-align: left; */
+  }
+  
+  .login-section span{
+    border: 2px solid #fff;
+    width: 280px;
+    margin-bottom: 150px;
+  }
+  
+  .login-section label {
+    margin: 10px 0 5px;
+    font-size: 14px;
+    color: #b3b3b3;
+  }
+  
+  .input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .input-container i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  
+  .input-container input {
+    width: 100%;
+    padding: 10px 10px 10px 30px;
+    background-color: #2e2e2e;
+    border: 1px solid #444;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #11212D;
+    border-radius: 7px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #0a131a;
+  }
+  
+  p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #b3b3b3;
+  }
+  
+  p a {
+    color: #3b5998;
+    text-decoration: none;
+  }
+  
+  p a:hover {
+    text-decoration: underline;
+  }
+  
+  .map-section {
+    width: 65%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    border-top: 1px solid #E6E6F0;
+    margin-top: 30px;
+  }
+  
+  .map-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background-color: #000;
+    font-size: 14px;
+    color: #b3b3b3;
+    width: 100%;
+    border-top: 1px solid #E6E6F0;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .login-section, .map-section {
+        width: 100%;
+        height: 50vh;
+    }
+    .login-section {
+        padding: 20px;
+        align-items: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .login-section {
+        padding: 15px;
+    }
+    .login-section h2 {
+        font-size: 20px;
+    }
+    .input-container input {
+        padding: 8px 8px 8px 25px;
+    }
+    button {
+        padding: 8px;
+  }
+  }
+  
